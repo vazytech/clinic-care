@@ -15,6 +15,10 @@ A clinic management system for small clinics: patient records, appointments, a l
 - **Billing:** invoices are created automatically from each consultation, with partial payments, M-Pesa code checks and printable receipts.
 - **Audit log:** every sign-in and every change is recorded with who did it and when.
 
+## Demo version (no server)
+
+`demo/` is a standalone copy of the app that needs no server or database: open `demo/index.html` in a browser, or host the folder anywhere static (Netlify serves it by default, see `netlify.toml`). It has no sign-in; use **View as** in the account menu to try each role. Data is saved only in that browser, so it's for demonstrations, not for a real clinic.
+
 ## Requirements
 
 - [Node.js](https://nodejs.org) 22.9 or newer

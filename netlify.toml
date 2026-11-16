@@ -1,14 +1,17 @@
-# Netlify serves the screens; the API runs on a separate Node host (e.g. Render).
+# Netlify currently serves the standalone demo (demo/): no server, no sign-in,
+# data stored in each visitor's browser.
+#
+# To serve the real app instead, once the backend is hosted (e.g. on Render):
+#   1. change publish to "public"
+#   2. uncomment the redirect below and put in your backend's address.
 [build]
-  publish = "public"
+  publish = "demo"
 
-# Forward API calls to the backend so the browser sees a single site,
-# which the sign-in cookie needs. Replace the address with your backend's.
-[[redirects]]
-  from = "/api/*"
-  to = "https://YOUR-BACKEND.onrender.com/api/:splat"
-  status = 200
-  force = true
+# [[redirects]]
+#   from = "/api/*"
+#   to = "https://YOUR-BACKEND.onrender.com/api/:splat"
+#   status = 200
+#   force = true
 
 [[headers]]
   for = "/*"
