@@ -5,7 +5,7 @@ services:
     name: clinic-care
     runtime: node
     plan: free            # sleeps when idle; use "starter" for an always-on clinic server
-    region: frankfurt     # closest Render region to East Africa
+    region: ohio          # same area as the Neon database (us-east-2), so queries are fast
     buildCommand: npm ci
     startCommand: npm start
     healthCheckPath: /api/health
