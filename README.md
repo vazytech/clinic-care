@@ -17,7 +17,7 @@ A clinic management system for small clinics: patient records, appointments, a l
 
 ## Requirements
 
-- [Node.js](https://nodejs.org) 20.6 or newer
+- [Node.js](https://nodejs.org) 22.9 or newer
 - [PostgreSQL](https://www.postgresql.org/download/) 13 or newer
 
 ## Setup

@@ -1,0 +1,18 @@
+# Netlify serves the screens; the API runs on a separate Node host (e.g. Render).
+[build]
+  publish = "public"
+
+# Forward API calls to the backend so the browser sees a single site,
+# which the sign-in cookie needs. Replace the address with your backend's.
+[[redirects]]
+  from = "/api/*"
+  to = "https://YOUR-BACKEND.onrender.com/api/:splat"
+  status = 200
+  force = true
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "same-origin"
+    Content-Security-Policy = "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; frame-ancestors 'none'"
