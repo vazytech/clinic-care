@@ -2,7 +2,7 @@
 
 const path = require('node:path');
 const express = require('express');
-const { HttpError } = require('./db');
+const { pool, HttpError } = require('./db');
 const { loadUser, requireLogin, login, logout } = require('./auth');
 
 const app = express();
@@ -29,6 +29,12 @@ app.use('/api', (req, res, next) => {
   if (req.method !== 'GET' && !req.is('application/json')) throw new HttpError(415, 'Requests must be sent as JSON.');
   res.setHeader('Cache-Control', 'no-store');
   next();
+});
+
+// Lets the hosting platform check the server and database are up. No login needed.
+app.get('/api/health', async (req, res) => {
+  await pool.query('SELECT 1');
+  res.json({ ok: true });
 });
 
 app.use('/api', loadUser);
