@@ -1,6 +1,13 @@
 // Database connection and small helpers shared by the routes.
 
+const dns = require('node:dns');
+const net = require('node:net');
 const { Pool, types } = require('pg');
+
+// Connect over IPv4. Some networks resolve IPv6 addresses for the database host but
+// can't actually route IPv6, which makes connections hang until they time out.
+dns.setDefaultResultOrder('ipv4first');
+net.setDefaultAutoSelectFamily(false);
 
 // Return DATE columns as 'YYYY-MM-DD' strings and NUMERIC as numbers,
 // which is what the frontend works with.
