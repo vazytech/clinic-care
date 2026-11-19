@@ -21,7 +21,8 @@ if (!process.env.DATABASE_URL) {
 
 // Dates like "today" follow the clinic's time zone, both here and in the database.
 const TZ = (process.env.TZ || 'Africa/Nairobi').replace(/[^\w/+-]/g, '');
-const pool = new Pool({ connectionString: process.env.DATABASE_URL, options: `-c TimeZone=${TZ}` });
+// trim() guards against a stray Windows line ending (\r) copied into .env.
+const pool = new Pool({ connectionString: process.env.DATABASE_URL.trim(), options: `-c TimeZone=${TZ}` });
 
 // Runs `fn` inside a transaction; rolls back if it throws.
 async function tx(fn) {
