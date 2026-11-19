@@ -166,6 +166,9 @@ function showLogin(message = '') {
   closeModal();
   $('#loginError').textContent = message;
   $('#loginScreen').hidden = false;
+  $('#loginView').hidden = false;
+  $('#signupView').hidden = true;
+  $('#signupError').textContent = '';
   $('#loginForm [name=password]').value = '';
   setTimeout(() => $('#loginForm [name=username]').focus(), 30);
 }
@@ -180,6 +183,40 @@ async function submitLogin(e) {
     await startSession(user);
   } catch (err) {
     $('#loginError').textContent = err.message;
+  } finally {
+    button.disabled = false;
+  }
+}
+
+function showSignupView() {
+  $('#loginView').hidden = true;
+  $('#signupView').hidden = false;
+  $('#signupError').textContent = '';
+  setTimeout(() => $('#signupForm [name=name]').focus(), 30);
+}
+
+function showLoginView() {
+  $('#signupView').hidden = true;
+  $('#loginView').hidden = false;
+  $('#loginError').textContent = '';
+  setTimeout(() => $('#loginForm [name=username]').focus(), 30);
+}
+
+async function submitSignup(e) {
+  e.preventDefault();
+  const form = new FormData(e.target);
+  const button = e.target.querySelector('button');
+  button.disabled = true;
+  try {
+    const { user } = await api('POST', '/api/signup', {
+      name: form.get('name'),
+      username: form.get('username'),
+      password: form.get('password'),
+      confirmPassword: form.get('confirmPassword')
+    });
+    await startSession(user);
+  } catch (err) {
+    $('#signupError').textContent = err.message;
   } finally {
     button.disabled = false;
   }
@@ -1142,6 +1179,9 @@ async function init() {
   renderDate();
   bind();
   $('#loginForm').onsubmit = submitLogin;
+  $('#signupForm').onsubmit = submitSignup;
+  $('#showSignup').onclick = showSignupView;
+  $('#showLogin').onclick = showLoginView;
   try {
     const { user } = await api('GET', '/api/me');
     await startSession(user);

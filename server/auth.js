@@ -88,16 +88,16 @@ function requirePerm(perm) {
 
 /* ---------- Login throttling ---------- */
 
-// After 5 failed attempts for a username, block it for 15 minutes. In memory only,
+// After 5 failed attempts for a username, block it for 2 minutes. In memory only,
 // which is fine for a single server process.
 const failures = new Map();
 const MAX_FAILURES = 5;
-const LOCK_MS = 15 * 60 * 1000;
+const LOCK_MS = 2 * 60 * 1000;
 
 function checkThrottle(username) {
   const f = failures.get(username);
   if (f && f.count >= MAX_FAILURES && Date.now() - f.last < LOCK_MS) {
-    throw new HttpError(429, 'Too many failed attempts. Try again in 15 minutes.');
+    throw new HttpError(429, 'Too many failed attempts. Try again in 2 minutes.');
   }
 }
 
@@ -132,4 +132,33 @@ async function logout(req, res) {
   res.json({ ok: true });
 }
 
-module.exports = { hashPassword, checkPasswordStrength, loadUser, requireLogin, requirePerm, login, logout };
+async function signup(req, res) {
+  const name = String(req.body?.name ?? '').trim();
+  const username = String(req.body?.username ?? '').trim().toLowerCase();
+  const password = String(req.body?.password ?? '');
+  const confirmPassword = String(req.body?.confirmPassword ?? '');
+
+  if (name.length < 2 || name.length > 120) throw new HttpError(400, 'Enter your full name (2–120 characters).');
+  if (!/^[a-z0-9][a-z0-9._-]{2,39}$/.test(username)) {
+    throw new HttpError(400, 'Use a username of 3–40 characters with letters, numbers, dots, underscores or hyphens.');
+  }
+  checkPasswordStrength(password);
+  if (password !== confirmPassword) throw new HttpError(400, 'Passwords do not match.');
+
+  const { rows: existing } = await pool.query('SELECT id FROM users WHERE username = $1', [username]);
+  if (existing[0]) throw new HttpError(409, 'That username is already taken.');
+
+  const passwordHash = await hashPassword(password);
+  const { rows } = await pool.query(
+    `INSERT INTO users (username, name, role, password_hash)
+     VALUES ($1, $2, 'reception', $3)
+     RETURNING id, username, name, role`,
+    [username, name, passwordHash]
+  );
+  const user = rows[0];
+  await createSession(res, user.id);
+  await audit(pool, user.id, 'signup');
+  res.status(201).json({ user });
+}
+
+module.exports = { hashPassword, checkPasswordStrength, loadUser, requireLogin, requirePerm, login, logout, signup };

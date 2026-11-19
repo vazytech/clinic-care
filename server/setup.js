@@ -14,7 +14,7 @@ const { hashPassword } = require('./auth');
 const { isoDate, localDate } = require('../public/shared');
 
 const USERS = [
-  { username: 'alex', name: 'Alex Morgan', role: 'admin' },
+  { username: 'anna', name: 'Anna martin ', role: 'admin' },
   { username: 'faith', name: 'Faith Njeri', role: 'reception' },
   { username: 'peter', name: 'Peter Wambua', role: 'nurse' },
   { username: 'james', name: 'Dr. James Mwangi', role: 'doctor' },
