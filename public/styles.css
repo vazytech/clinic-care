@@ -472,8 +472,13 @@ button.appt-status:hover { filter: brightness(.96); }
 
 .login-form { display: grid; gap: 14px; }
 .login-form label { display: grid; gap: 6px; font-size: 14px; font-weight: 600; color: var(--text); }
+.password-field { display: grid; gap: 6px; }
 .login-form input { width: 100%; padding: 11px 12px; border: 1px solid #c3ccd9; border-radius: 8px; font-size: 15px; }
 .login-form input:focus { outline: 3px solid #bcd0f6; border-color: var(--primary); }
+.password-input-wrap { position: relative; display: block; }
+.login-form .password-input-wrap input { padding-right: 64px; }
+.password-toggle { position: absolute; top: 50%; right: 10px; transform: translateY(-50%); padding: 4px; border: 0; background: transparent; color: var(--primary); font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; }
+.password-toggle:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; border-radius: 4px; }
 .login-form .button { width: 100%; padding: 12px; }
 .login-error { min-height: 1.4em; margin: -4px 0 0; color: var(--red); font-size: 14px; font-weight: 500; }
 .auth-switch { width: 100%; margin-top: 12px; padding: 8px; border: 0; background: transparent; color: var(--primary); font: inherit; font-weight: 600; cursor: pointer; }

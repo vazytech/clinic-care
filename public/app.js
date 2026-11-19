@@ -170,13 +170,21 @@ function showLogin(message = '') {
   $('#signupView').hidden = true;
   $('#signupError').textContent = '';
   $('#loginForm [name=password]').value = '';
+  setLoginPasswordVisibility(false);
   setTimeout(() => $('#loginForm [name=username]').focus(), 30);
+}
+
+function setLoginPasswordVisibility(visible) {
+  $('#loginForm [name=password]').type = visible ? 'text' : 'password';
+  $('#toggleLoginPassword').textContent = visible ? 'Hide' : 'Show';
+  $('#toggleLoginPassword').setAttribute('aria-label', `${visible ? 'Hide' : 'Show'} password`);
+  $('#toggleLoginPassword').setAttribute('aria-pressed', String(visible));
 }
 
 async function submitLogin(e) {
   e.preventDefault();
   const form = new FormData(e.target);
-  const button = e.target.querySelector('button');
+  const button = e.target.querySelector('button[type="submit"]');
   button.disabled = true;
   try {
     const { user } = await api('POST', '/api/login', { username: form.get('username'), password: form.get('password') });
@@ -199,6 +207,7 @@ function showLoginView() {
   $('#signupView').hidden = true;
   $('#loginView').hidden = false;
   $('#loginError').textContent = '';
+  setLoginPasswordVisibility(false);
   setTimeout(() => $('#loginForm [name=username]').focus(), 30);
 }
 
@@ -1180,6 +1189,10 @@ async function init() {
   bind();
   $('#loginForm').onsubmit = submitLogin;
   $('#signupForm').onsubmit = submitSignup;
+  $('#toggleLoginPassword').onclick = () => {
+    const password = $('#loginForm [name=password]');
+    setLoginPasswordVisibility(password.type === 'password');
+  };
   $('#showSignup').onclick = showSignupView;
   $('#showLogin').onclick = showLoginView;
   try {

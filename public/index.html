@@ -93,9 +93,12 @@
         <p>Use your clinic credentials.</p>
         <form class="login-form" id="loginForm">
           <label>Username<input name="username" autocomplete="username" autocapitalize="none" spellcheck="false" required></label>
-          <label>Password<input name="password" type="password" autocomplete="current-password" required></label>
+          <div class="password-field">
+            <label for="loginPassword">Password</label>
+            <span class="password-input-wrap"><input id="loginPassword" name="password" type="password" autocomplete="current-password" required><button class="password-toggle" id="toggleLoginPassword" type="button" aria-label="Show password" aria-pressed="false">Show</button></span>
+          </div>
           <p class="login-error" id="loginError" role="alert"></p>
-          <button class="button button-primary">Sign in</button>
+          <button class="button button-primary" type="submit">Sign in</button>
         </form>
         <button class="auth-switch" id="showSignup" type="button">Create a new account</button>
       </div>
