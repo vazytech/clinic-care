@@ -471,6 +471,4 @@ button.appt-status:hover { filter: brightness(.96); }
 }
 
 /* ---------- Demo ---------- */
-.demo-banner { padding: 8px 36px; background: #fdf0d9; border-bottom: 1px solid #f3d9a6; color: #5c3a00; font-size: 14px; }
 .login-user.current { border-color: var(--primary); background: var(--primary-soft); }
-@media (max-width: 760px) { .demo-banner { padding: 8px 16px; font-size: 13px; } }
