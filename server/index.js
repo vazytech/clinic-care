@@ -3,7 +3,7 @@
 const path = require('node:path');
 const express = require('express');
 const { pool, HttpError } = require('./db');
-const { loadUser, requireLogin, login, logout } = require('./auth');
+const { loadUser, requireLogin, login, logout, signup } = require('./auth');
 
 const app = express();
 app.disable('x-powered-by');
@@ -39,6 +39,7 @@ app.get('/api/health', async (req, res) => {
 
 app.use('/api', loadUser);
 app.post('/api/login', login);
+app.post('/api/signup', signup);
 app.post('/api/logout', logout);
 app.get('/api/me', requireLogin, (req, res) => res.json({ user: req.user }));
 

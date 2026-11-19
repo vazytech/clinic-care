@@ -26,7 +26,43 @@ A clinic management system for small clinics: patient records, appointments, a l
 
 ## Setup
 
-1. **Create the database** (Linux; on Windows use pgAdmin or the SQL Shell):
+### Windows (PowerShell)
+
+To run the standalone demo without a server or database:
+
+```powershell
+cd "C:\Users\HELLO\Desktop\clinic\clinic-care"
+Start-Process .\demo\index.html
+```
+
+To run the backend and the real frontend together, first install Node.js 22.9+ and PostgreSQL 13+. In pgAdmin's Query Tool connected to the `postgres` database, run these statements separately (or enter them in the PostgreSQL SQL Shell):
+
+```sql
+CREATE USER clinic_care WITH PASSWORD 'choose-a-strong-password';
+CREATE DATABASE clinic_care OWNER clinic_care;
+```
+
+Then in PowerShell:
+
+```powershell
+cd "C:\Users\HELLO\Desktop\clinic\clinic-care"
+npm install
+Copy-Item .env.example .env
+notepad .env
+```
+
+In `.env`, set `DATABASE_URL` to `postgresql://clinic_care:choose-a-strong-password@localhost:5432/clinic_care`, replacing the example password with the one you chose. Then initialize and start the app:
+
+```powershell
+npm run setup
+npm start
+```
+
+`npm run setup` prints one-time passwords for the first staff accounts; save them. Open http://localhost:3000. The backend serves the real frontend from `public/`; no separate frontend command is needed. For automatic server restarts while developing, use `npm run dev` instead of `npm start`.
+
+### Linux
+
+1. **Create the database:**
    ```bash
    sudo -u postgres psql -c "CREATE USER clinic_care WITH PASSWORD 'choose-a-strong-password';"
    sudo -u postgres createdb -O clinic_care clinic_care
