@@ -11,6 +11,11 @@ CREATE TABLE IF NOT EXISTS users (
   created_at    timestamptz NOT NULL DEFAULT now()
 );
 
+-- Accounts created through sign-up start as 'pending' and can't sign in until an
+-- administrator approves them. Added after the first release, hence the ALTER.
+ALTER TABLE users ADD COLUMN IF NOT EXISTS status text NOT NULL DEFAULT 'active'
+  CHECK (status IN ('pending', 'active', 'rejected'));
+
 -- Only a hash of the session token is stored, so a database leak doesn't expose live sessions.
 CREATE TABLE IF NOT EXISTS sessions (
   token_hash text PRIMARY KEY,

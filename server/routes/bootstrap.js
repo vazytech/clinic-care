@@ -33,7 +33,7 @@ router.get('/bootstrap', async (req, res) => {
       GROUP BY m.id ORDER BY m.id`)
   ]);
 
-  const data = { patients: patients.rows, appointments: appointments.rows, team: team.rows, vitals: [], notes: [], invoices: [] };
+  const data = { patients: patients.rows, appointments: appointments.rows, team: team.rows, vitals: [], notes: [], invoices: [], accountRequests: [] };
 
   if (clinical) {
     const [vitals, notes, rx, amendments] = await Promise.all([
@@ -52,6 +52,13 @@ router.get('/bootstrap', async (req, res) => {
     const amendByNote = groupBy(amendments.rows, 'note_id');
     data.vitals = vitals.rows;
     data.notes = notes.rows.map(n => ({ ...n, prescriptions: rxByNote.get(n.id) ?? [], amendments: amendByNote.get(n.id) ?? [] }));
+  }
+
+  // Administrators see account requests waiting for approval.
+  if (roleCan(req.user.role, 'team.manage')) {
+    const { rows } = await pool.query(`SELECT id, name, username, to_char(created_at, ${STAMP}) AS "requestedAt"
+      FROM users WHERE status = 'pending' ORDER BY created_at`);
+    data.accountRequests = rows;
   }
 
   if (billing) {

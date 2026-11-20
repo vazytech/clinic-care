@@ -477,3 +477,10 @@ button.appt-status:hover { filter: brightness(.96); }
 .login-form .button { width: 100%; padding: 12px; }
 .login-error { min-height: 1.4em; margin: -4px 0 0; color: var(--red); font-size: 14px; font-weight: 500; }
 .auth-switch { width: 100%; margin-top: 12px; padding: 8px; border: 0; background: transparent; color: var(--primary); font: inherit; font-weight: 600; cursor: pointer; }
+.login-notice { margin: -4px 0 0; padding: 10px 12px; border-radius: 8px; background: var(--teal-soft); color: var(--teal); font-size: 14px; font-weight: 500; }
+
+/* Account requests (Care team page, administrators only) */
+.requests-panel { margin-bottom: 20px; border-color: #f3d9a6; background: #fffdf8; }
+.request-row { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-top: 1px solid var(--border-soft); flex-wrap: wrap; }
+.request-row .team-person { min-width: 180px; }
+.request-role { padding: 7px 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); font-size: 14px; }

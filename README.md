@@ -15,6 +15,13 @@ A clinic management system for small clinics: patient records, appointments, a l
 - **Billing:** invoices are created automatically from each consultation, with partial payments, M-Pesa code checks and printable receipts.
 - **Audit log:** every sign-in and every change is recorded with who did it and when.
 
+## Staff accounts
+
+- The first accounts come from the setup command (see below).
+- New staff can click **"New staff member? Request an account"** on the sign-in screen. The request stays **pending**, with no access at all, until an administrator approves it.
+- Administrators see waiting requests in **notifications** and on the **Care team** page. There they **choose the role** (front desk, nurse, clinician or administrator) and approve, or reject the request.
+- Rejected requests can't sign in, and their username stays reserved. At most 20 requests can wait at once, to limit spam.
+
 ## Demo version (no server)
 
 `demo/` is a standalone copy of the app that needs no server or database: open `demo/index.html` in a browser, or host the folder anywhere static (Netlify serves it by default, see `netlify.toml`). It has no sign-in; use **View as** in the account menu to try each role. Data is saved only in that browser, so it's for demonstrations, not for a real clinic.
@@ -80,7 +87,7 @@ npm start
    npm run setup              # with demo patients
    npm run setup -- --no-demo # without demo data, for real use
    ```
-   This prints a one-time password for each account (`alex`, `faith`, `peter`, `james`, `sarah`). Save them.
+   This prints a one-time password for each account (`anna`, `faith`, `peter`, `james`, `sarah`; `anna` is the administrator). Save them.
 
 4. **Start the server:**
    ```bash

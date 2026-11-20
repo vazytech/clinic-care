@@ -50,6 +50,7 @@ app.use('/api', require('./routes/appointments').router);
 app.use('/api', require('./routes/clinical'));
 app.use('/api', require('./routes/billing'));
 app.use('/api', require('./routes/team'));
+app.use('/api', require('./routes/users'));
 app.use('/api', () => { throw new HttpError(404, 'Not found.'); });
 
 app.use(express.static(path.join(__dirname, '..', 'public')));
@@ -69,4 +70,12 @@ app.use((err, req, res, next) => {
 
 const port = Number(process.env.PORT) || 3000;
 const host = process.env.HOST || '127.0.0.1';
-app.listen(port, host, () => console.log(`Clinic Care running at http://${host === '0.0.0.0' ? 'localhost' : host}:${port}`));
+
+// Bring the database up to date before serving (schema.sql only adds what's missing),
+// so a new deploy picks up new tables or columns without a manual step.
+pool.query(require('node:fs').readFileSync(path.join(__dirname, 'schema.sql'), 'utf8'))
+  .then(() => app.listen(port, host, () => console.log(`Clinic Care running at http://${host === '0.0.0.0' ? 'localhost' : host}:${port}`)))
+  .catch(err => {
+    console.error('Could not prepare the database:', err.message);
+    process.exit(1);
+  });

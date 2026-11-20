@@ -113,7 +113,7 @@ async function login(req, res) {
   if (!username || !password) throw new HttpError(400, 'Enter your username and password.');
   checkThrottle(username);
 
-  const { rows } = await pool.query('SELECT id, username, name, role, password_hash FROM users WHERE username = $1 AND active', [username]);
+  const { rows } = await pool.query('SELECT id, username, name, role, password_hash, status, active FROM users WHERE username = $1', [username]);
   const user = rows[0];
   if (!user || !(await verifyPassword(password, user.password_hash))) {
     recordFailure(username);
@@ -121,6 +121,9 @@ async function login(req, res) {
     throw new HttpError(401, 'Wrong username or password.');
   }
   failures.delete(username);
+  // Only say why sign-in is blocked once the password has proved who they are.
+  if (user.status === 'pending') throw new HttpError(403, 'Your account is waiting for an administrator to approve it.');
+  if (user.status !== 'active' || !user.active) throw new HttpError(403, 'This account isn’t active. Contact your clinic administrator.');
   await createSession(res, user.id);
   await audit(pool, user.id, 'login');
   res.json({ user: { id: user.id, username: user.username, name: user.name, role: user.role } });
@@ -131,6 +134,10 @@ async function logout(req, res) {
   await endSession(req, res);
   res.json({ ok: true });
 }
+
+// Anyone can request an account, but it stays "pending" — with no access at all —
+// until an administrator approves it and chooses its role (see routes/users.js).
+const MAX_PENDING = 20;
 
 async function signup(req, res) {
   const name = String(req.body?.name ?? '').trim();
@@ -147,18 +154,18 @@ async function signup(req, res) {
 
   const { rows: existing } = await pool.query('SELECT id FROM users WHERE username = $1', [username]);
   if (existing[0]) throw new HttpError(409, 'That username is already taken.');
+  const { rows: [{ pending }] } = await pool.query(`SELECT count(*)::int AS pending FROM users WHERE status = 'pending'`);
+  if (pending >= MAX_PENDING) throw new HttpError(429, 'There are too many account requests waiting. Ask your clinic administrator.');
 
   const passwordHash = await hashPassword(password);
-  const { rows } = await pool.query(
-    `INSERT INTO users (username, name, role, password_hash)
-     VALUES ($1, $2, 'reception', $3)
-     RETURNING id, username, name, role`,
+  // The role is a placeholder; the administrator picks the real one when approving.
+  const { rows: [user] } = await pool.query(
+    `INSERT INTO users (username, name, role, password_hash, status, active)
+     VALUES ($1, $2, 'reception', $3, 'pending', false) RETURNING id`,
     [username, name, passwordHash]
   );
-  const user = rows[0];
-  await createSession(res, user.id);
-  await audit(pool, user.id, 'signup');
-  res.status(201).json({ user });
+  await audit(pool, user.id, 'signup.request', 'user', username);
+  res.status(201).json({ pending: true });
 }
 
 module.exports = { hashPassword, checkPasswordStrength, loadUser, requireLogin, requirePerm, login, logout, signup };
