@@ -24,7 +24,7 @@ A clinic management system for small clinics: patient records, appointments, a l
 
 ## Demo version (no server)
 
-`demo/` is a standalone copy of the app that needs no server or database: open `demo/index.html` in a browser, or host the folder anywhere static (Netlify serves it by default, see `netlify.toml`). It has no sign-in; use **View as** in the account menu to try each role. Data is saved only in that browser, so it's for demonstrations, not for a real clinic.
+`demo/` is a standalone copy of the app that needs no server or database: open `demo/index.html` in a browser, or copy the folder to any computer. It has no sign-in; use **View as** in the account menu to try each role. Data is saved only in that browser, so it's for demonstrations, not for a real clinic.
 
 ## Requirements
 
@@ -98,6 +98,18 @@ npm start
 To change a password: `npm run password -- <username>`.
 
 To let other computers on the clinic network connect, set `HOST=0.0.0.0` in `.env` and open `http://<this-computer's-IP>:3000` on them.
+
+## Use it on the clinic's network (no internet needed)
+
+Everything runs on one computer, with nothing online: no hosting service and no cloud database. The fonts are bundled too.
+
+To let other computers in the clinic use it over the local network (Wi-Fi or cable):
+
+1. In `.env`, set `HOST=0.0.0.0`, then restart with `npm start`.
+2. Find this computer's local IP address: `hostname -I` on Linux, `ipconfig` on Windows. It looks like `192.168.1.20`.
+3. On the other computers, open `http://192.168.1.20:3000` in a browser.
+
+If a firewall prompt appears, allow access on **private** networks only.
 
 ## Project layout
 
